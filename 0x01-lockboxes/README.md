@@ -5,4 +5,4 @@ There can be keys that do not have boxes.
 A box may be empty i.e., not have any keys at all.
 The first box is already unlocked. Given a certain set of boxes, write a function that determines if all the boxes can be opened. Function Prototype:  def canUnlockAll(boxes)
 
-where boxes is a list of lists
+where boxes is a list of lists.
