@@ -4,6 +4,7 @@
 Solution to lockboxes problem
 """
 
+
 def canUnlockAll(boxes):
     """
     Determines whether a series of locked boxes
