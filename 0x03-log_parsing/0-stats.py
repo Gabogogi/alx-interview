@@ -1,44 +1,37 @@
 #!/usr/bin/python3
-
+'''Module for log parsing script.'''
 import sys
-import re
-
-def output(log: dict, total_size: int) -> None:
-    """
-    Helper function to display stats
-    """
-    print("Total file size:", total_size)
-    for code in sorted(log["code_frequency"]):
-        if log["code_frequency"][code]:
-            print("{}: {}".format(code, log["code_frequency"][code]))
 
 if __name__ == "__main__":
-    regex = re.compile(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)')  # Regex modified for correct grouping
+    size = [0]
+    codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 
-    line_count = 0
-    log = {}
-    log["file_size"] = 0
-    log["code_frequency"] = {str(code): 0 for code in [200, 301, 400, 401, 403, 404, 405, 500]}
+    def check_match(line):
+        '''Checks for regexp match in line.'''
+        try:
+            line = line[:-1]
+            words = line.split(" ")
+            size[0] += int(words[-1])
+            code = int(words[-2])
+            if code in codes:
+                codes[code] += 1
+        except:
+            pass
 
+    def print_stats():
+        '''Prints accumulated statistics.'''
+        print("File size: {}".format(size[0]))
+        for k in sorted(codes.keys()):
+            if codes[k]:
+                print("{}: {}".format(k, codes[k]))
+    i = 1
     try:
         for line in sys.stdin:
-            line = line.strip()
-            match = regex.match(line)
-            if match:
-                line_count += 1
-                file_size = int(match.group(3))
-
-                # File size
-                log["file_size"] += file_size
-
-                # Status code
-                code = match.group(2)
-                if code.isdecimal() and int(code) in log["code_frequency"]:
-                    log["code_frequency"][code] += 1
-
-                if line_count % 10 == 0:
-                    output(log, log["file_size"])
-
+            check_match(line)
+            if i % 10 == 0:
+                print_stats()
+            i += 1
     except KeyboardInterrupt:
-        output(log, log["file_size"])
-        sys.exit(0)
+        print_stats()
+        raise
+    print_stats()
