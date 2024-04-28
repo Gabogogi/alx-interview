@@ -35,4 +35,3 @@ if __name__ == "__main__":
         print_stats()
         raise
     print_stats()
-
