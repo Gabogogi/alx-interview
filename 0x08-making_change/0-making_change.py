@@ -1,20 +1,25 @@
 #!/usr/bin/python3
-"""Change making module.
-"""
+""" Making changes """
 
 
 def makeChange(coins, total):
+    """ Generate changes needed to reach total
+
+    Args:
+        coins ([List]): [List of Coins available]
+        total ([int]): [total amount needed]
+    """
     if total <= 0:
         return 0
-
-    # Create an array to store the minimum number of coins required to reach each value
-    min_coins = [float('inf')] * (total + 1)
-    min_coins[0] = 0
-
-    for coin in coins:
-        for i in range(coin, total + 1):
-            # Update the minimum number of coins required for each value
-            min_coins[i] = min(min_coins[i], min_coins[i - coin] + 1)
-
-    # Return the minimum number of coins required to reach the total value
-    return min_coins[total] if min_coins[total] != float('inf') else -1
+    check = 0
+    temp = 0
+    coins.sort(reverse=True)
+    for i in coins:
+        while check < total:
+            check += i
+            temp += 1
+        if check == total:
+            return temp
+        check -= i
+        temp -= 1
+    return -1
